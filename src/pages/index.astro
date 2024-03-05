@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+import HomePagination from "@components/HomePagination.astro";
+import Base from "@layouts/Base.astro";
+import Posts from "@layouts/Posts.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Durr Studios Blog"
+    href="/rss.xml"
+/>
+<Base>
+  <Posts posts={posts} />
+  <HomePagination />
+</Base>
