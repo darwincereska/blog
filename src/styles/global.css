@@ -15,14 +15,21 @@
     @apply text-zinc-800 dark:text-zinc-200 !important;
   }
   p,
-  li,
+  
   strong,
   blockquote,
   table * {
-    @apply text-zinc-700 dark:text-zinc-300;
+    @apply text-zinc-900 dark:text-zinc-300 !important;
+    font-family: sans-serif;
   }
+ li {
+  font-family: sans-serif;
+  @apply text-zinc-900 dark:text-zinc-300 !important;
+}
+
+ 
   kbd {
-    @apply bg-white text-zinc-700;
+    @apply bg-white text-zinc-500;
   }
   mark {
     @apply bg-yellow-300;
