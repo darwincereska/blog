@@ -4,16 +4,10 @@
   "description": "EV0 is a free and open-source serverless blog template, built with Astro, Tailwind CSS, and TypeScript.",
   "license": "MIT",
   "private": true,
-  "author": {
-    "name": "GNDX"
-  },
+  "author": "GNDX",
   "homepage": "https://ev0.gndx.dev",
   "contributors": [
-    {
-      "name": "Oscar Barajas @gndx",
-      "email": "oscar@gndx.dev",
-      "url": "https://gndx.dev"
-    }
+    "Oscar Barajas @gndx <oscar@gndx.dev> (https://gndx.dev)"
   ],
   "keywords": [
     "JavaScript",
@@ -24,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gndx/ev0-astro-theme.dev.git"
+    "url": "git+https://github.com/gndx/ev0-astro-theme.dev.git"
   },
   "scripts": {
     "dev": "astro dev",
@@ -68,5 +62,9 @@
     "astro-compressor": "^0.4.1",
     "markdown-it": "^14.0.0",
     "sanitize-html": "^2.12.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/gndx/ev0-astro-theme.dev/issues"
+  },
+  "main": ".eslintrc.js"
 }
