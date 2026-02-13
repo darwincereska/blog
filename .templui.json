@@ -1,0 +1,7 @@
+{
+  "componentsDir": "web/components",
+  "utilsDir": "web/utils",
+  "moduleName": "blog",
+  "jsDir": "web/static/js",
+  "jsPublicPath": "/web/static/js"
+}

@@ -1,0 +1,204 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary build with `go test -c`
+*.test
+
+# Output of go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Build output directory
+dist/
+build/
+bin/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_STORE
+.DS_STORE?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# Air (live reload tool) temporary files
+tmp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration files with secrets
+config.json
+config.yaml
+config.yml
+secrets.json
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# CSS build output (Tailwind)
+web/static/css/style.css
+
+# Coverage reports
+coverage.out
+coverage.html
+coverage.txt
+
+# Profiling data
+*.prof
+*.pprof
+
+# Memory dumps
+*.dump
+
+# Local development files
+.local/
+local/
+
+# Documentation build
+docs/_build/
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Vim
+*.swp
+*.swo
+.vimrc.local
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Archive files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Taskfile
+.task

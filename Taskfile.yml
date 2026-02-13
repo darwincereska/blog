@@ -1,0 +1,101 @@
+version: "3"
+
+method: checksum
+
+vars:
+  GO_CMD:
+    sh: command -v go >/dev/null 2>&1 && echo "go"
+  
+  GO_FLAGS: "-ldflags=-s -w -trimpath"
+  
+  TAILWIND_CMD:
+    sh: command -v tailwindcss >/dev/null 2>&1 && echo "tailwindcss"
+
+tasks:
+  # Development tasks
+  dev:
+    desc: Start development server with hot reload
+    cmds:
+      - task --parallel tailwind templ
+
+  run:
+    desc: Build and run go server binary
+    deps: [build, build-css]
+    cmds:
+      - "./dist/server"
+
+  # Build tasks
+  build:
+    desc: Build go server binary
+    deps: [dist]
+    sources:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+    generates:
+      - dist/server
+    cmds:
+      - "{{ .GO_CMD }} build {{ .PROD_FLAGS }} -o dist/server cmd/main.go"
+
+  build-css:
+    desc: Build CSS once
+    sources:
+      - web/static/css/input.css
+      - tailwind.config.js
+    generates:
+      - web/static/css/style.css
+    cmds:
+      - "{{ .TAILWIND_CMD }} -i ./web/static/css/input.css -o ./web/static/css/style.css"
+
+  build-all:
+    desc: Build everything (Go binary + CSS)
+    deps: [build, build-css]
+
+  # Watch tasks
+  templ:
+    desc: Run templ with integrated server and hot reload
+    cmds:
+      - 'templ generate --watch --proxy="http://localhost:8080" --cmd="go run ./cmd/web/main.go" --open-browser=false'
+
+  tailwind:
+    desc: Watch TailwindCSS changes
+    cmds:
+      - "{{ .TAILWIND_CMD }} -i ./web/static/css/input.css -o ./web/static/css/style.css --watch"
+
+  # Utility tasks
+  deps:
+    desc: Install dependencies
+    cmds:
+      - "{{ .GO_CMD }} mod tidy"
+      - "{{ .GO_CMD }} mod download"
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf dist/
+      - rm -f web/static/css/style.css
+
+  dist:
+    internal: true
+    silent: true
+    status:
+      - test -d dist/
+    cmds:
+      - mkdir -p dist/
+
+  # Testing and linting
+  test:
+    desc: Run tests
+    cmds:
+      - "{{ .GO_CMD }} test ./..."
+
+  fmt:
+    desc: Format Go code
+    cmds:
+      - "{{ .GO_CMD }} fmt ./..."
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - "{{ .GO_CMD }} vet ./..."
+

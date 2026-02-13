@@ -1,0 +1,130 @@
+package navigation
+
+
+import (
+    "fmt"
+    // CHANGE TO WHATEVER DIRECTORY HAS YOUR TEMPLUI UTILS FOLDER
+    "blog/web/utils"
+)
+
+type Variant string
+type Size string
+
+const(
+    VariantDefault Variant = "default"
+    VariantOutline Variant = "outline"
+    VariantSecondary Variant = "secondary"
+    VariantGhost Variant = "ghost"
+)
+
+const(
+    SizeDefault Size = "default"
+    SizeSm Size = "sm"
+    SizeLg Size = "lg"
+    SizeIcon Size = "icon"
+)
+
+type Props struct {
+    ID string 
+    Class string
+    Columns int
+    Attributes templ.Attributes
+    Variant Variant
+    Size Size
+}
+
+templ Navigation(props ...Props) {
+    {{ var p Props }}
+    {{ var cols string }}
+    if len(props) > 0 {
+        {{ p = props[0] }}
+    }
+
+    if p.Columns == 0 {
+        {{ cols = "grid-cols-1"}}
+    } else {
+        {{ cols = fmt.Sprintf("grid-cols-%d", p.Columns) }}
+    }
+
+    <header
+       class={
+           utils.TwMerge(
+                "w-full bg-card border-b border-b-secondary h-16 grid 2 text-lg items-center px-4 ",
+                cols,
+           ),
+       }
+
+       { p.Attributes... }
+    >
+        { children... } 
+    </header>
+}
+
+func (p Props) variantClasses() string {
+    switch p.Variant {
+    case VariantGhost:
+        return "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent"
+    case VariantOutline:
+        return "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+    case VariantSecondary:
+        return "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80"
+    default:
+        return "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
+    }
+}
+
+func (b Props) sizeClasses() string {
+	switch b.Size {
+	case SizeSm:
+		return "h-8 rounded-full aspect-square gap-1.5 px-3 has-[>svg]:px-2.5"
+	case SizeLg:
+		return "h-10 rounded-full aspect-square px-6 has-[>svg]:px-4"
+	case SizeIcon:
+		return "size-9"
+	default: // SizeDefault
+		return "h-9 px-4 py-2 has-[>svg]:px-3"
+	}
+}
+
+// Theme change script
+templ Script() {
+    <script>
+        function ThemeToggle() {
+            return {
+                darkMode: false,
+                
+                init() {
+                    // Check localStorage for "darkMode" first, then use system preference
+                    const stored = localStorage.getItem("darkMode")
+                    if (stored !== null) {
+                        this.darkMode = stored === "true"
+                    } else {
+                        this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    }
+
+                    // Apply theme immediately
+                    this.updateTheme()
+
+                    // Watch for changes
+                    this.$watch("darkMode", () => {
+                        this.updateTheme()
+                        localStorage.setItem('darkMode', this.darkMode) 
+                    })
+                },
+
+                toggle() {
+                    this.darkMode = !this.darkMode
+                },
+
+                updateTheme() {
+                    if (this.darkMode) {
+                        document.body.classList.add("dark")
+                    } else {
+                        document.body.classList.remove("dark")
+                    }
+                }
+            }
+        }
+    </script>
+}
+
