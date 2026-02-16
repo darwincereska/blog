@@ -37,6 +37,11 @@ tasks:
     cmds:
       - "{{ .GO_CMD }} build {{ .PROD_FLAGS }} -o dist/server cmd/main.go"
 
+  build-queries:
+    desc: Builds GraphQL queries
+    cmds:
+      - "{{ .GO_CMD }} run github.com/Khan/genqlient"
+
   build-css:
     desc: Build CSS once
     sources:

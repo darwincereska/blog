@@ -1,0 +1,100 @@
+# Fragment for full post content
+fragment Post on Post {
+  title
+  slug
+  meta_title
+  meta_description
+  featured
+  reading_time
+  createdAt
+  updatedAt
+  # @genqlient(flatten: true)
+  author {
+    ...Author
+  }
+  # @genqlient(flatten: true)
+  tags {
+    ...Tag
+  }
+  excerpt
+  content
+    # @genqlient(flatten: true)
+  featured_image {
+    ...FeaturedImage
+  }
+
+}
+
+# Fragment for post summary
+fragment PostSummary on Post {
+  title
+  slug
+  featured
+  reading_time
+  createdAt
+  updatedAt
+  # @genqlient(flatten: true)
+  author {
+    ...Author
+  }
+  # @genqlient(flatten: true)
+  tags {
+    ...Tag
+  }
+  excerpt
+  # @genqlient(flatten: true)
+  featured_image {
+    ...FeaturedImage
+  }
+}
+
+# Fragment for featured image
+fragment FeaturedImage on UploadFile {
+  name
+  url
+}
+
+# Get all posts 
+query GetAllPosts($pageSize: Int = 10, $page: Int = 1) {
+  # @genqlient(flatten: true)
+  posts(pagination: { pageSize: $pageSize, page: $page }) {
+    ...Post
+  } 
+}
+
+# Get featured posts
+query GetFeaturedPosts($pageSize: Int = 10, $page: Int = 1) {
+  # @genqlient(flatten: true)
+  posts(pagination: { pageSize: $pageSize, page: $page }
+  filters: { featured: { eq: true } }
+  ) {
+    ...PostSummary 
+  }
+}
+
+# Get specific post (by slug)
+query GetPost($slug: String!) {
+  # @genqlient(flatten: true)
+  posts(filters: { slug: { eq: $slug } }) {
+    ...Post
+  }
+}
+
+# Get post summaries
+query GetPostSummaries($pageSize: Int = 10, $page: Int = 1) {
+  # @genqlient(flatten: true)
+  posts(pagination: { pageSize: $pageSize, page: $page }) {
+    ...PostSummary
+  }
+}
+
+# Get posts by tag (slug)
+query GetPostsByTag($tag: String!,$pageSize: Int = 10, $page: Int = 1) {
+  # @genqlient(flatten: true)
+  posts(
+    pagination: { pageSize: $pageSize, page: $page },
+    filters: { tags: { slug: { eq: $tag } } }
+  ) {
+    ...PostSummary
+  }
+}

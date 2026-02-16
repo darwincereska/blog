@@ -1,0 +1,15 @@
+# Fragment for authors
+fragment Author on Author {
+  name
+  email
+  bio
+}
+
+
+# Gets all authors
+query GetAllAuthors($pageSize: Int = 10, $page: Int = 1) {
+  # @genqlient(flatten: true)
+  authors(pagination: { pageSize: $pageSize, page: $page }) {
+    ...Author
+  }
+}

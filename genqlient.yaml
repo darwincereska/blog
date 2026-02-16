@@ -1,0 +1,12 @@
+# Default genqlient config; for full documentation see:
+# https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
+schema: ./internal/strapi/schema.graphql
+operations:
+  - ./internal/strapi/queries/*
+generated: ./internal/repositories/strapi.go
+casing:
+  default: auto_camel_case
+package: repositories
+bindings:
+  DateTime:
+    type: time.Time

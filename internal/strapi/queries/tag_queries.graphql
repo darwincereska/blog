@@ -1,0 +1,13 @@
+# Fragment for tag
+fragment Tag on Tag {
+  name
+  slug
+}
+
+# Get all tags
+query GetAllTags {
+  # @genqlient(flatten: true)
+  tags {
+    ...Tag
+  }
+}
