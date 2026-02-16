@@ -54,7 +54,7 @@ tasks:
 
   build-all:
     desc: Build everything (Go binary + CSS)
-    deps: [build, build-css]
+    deps: [build, build-css, build-queries]
 
   # Watch tasks
   templ:
