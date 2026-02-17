@@ -8,8 +8,7 @@ vars:
   
   GO_FLAGS: "-ldflags=-s -w -trimpath"
   
-  TAILWIND_CMD:
-    sh: command -v tailwindcss >/dev/null 2>&1 && echo "tailwindcss"
+  TAILWIND_CMD: "tailwindcss"
 
 tasks:
   # Development tasks
@@ -71,7 +70,6 @@ tasks:
   deps:
     desc: Install dependencies
     cmds:
-      - "{{ .GO_CMD }} mod tidy"
       - "{{ .GO_CMD }} mod download"
 
   clean:

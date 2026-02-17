@@ -16,24 +16,24 @@ import (
 // StrapiService contains all methods for interacting with Strapi
 type StrapiService struct {
 	client graphql.Client
-	token string // Authorization bearer token
-	sf *singleflight.Group // Singleflight group to reduce api calls
-	cache *cache.Cache // Redis cache
+	token  string              // Authorization bearer token
+	sf     *singleflight.Group // Singleflight group to reduce api calls
+	cache  *cache.Cache        // Redis cache
 }
 
 func NewStrapiService(endpoint, token string, cache *cache.Cache) *StrapiService {
 	httpClient := &http.Client{
 		Transport: &authTransport{
 			token: token,
-			base: http.DefaultTransport,
+			base:  http.DefaultTransport,
 		},
 	}
 
 	return &StrapiService{
 		client: graphql.NewClient(endpoint, httpClient),
-		token: token,
-		sf: &singleflight.Group{},
-		cache: cache,
+		token:  token,
+		sf:     &singleflight.Group{},
+		cache:  cache,
 	}
 }
 
@@ -51,7 +51,7 @@ func (s *StrapiService) GetAllPosts(ctx context.Context, pageSize, page int) ([]
 	}
 
 	//  Cache miss - use singleflight
-	result, err, _:= s.sf.Do(key, func() (any, error) {
+	result, err, _ := s.sf.Do(key, func() (any, error) {
 		resp, err := repo.GetAllPosts(ctx, s.client, pageSize, page)
 		if err != nil {
 			return nil, err
@@ -142,7 +142,7 @@ func (s *StrapiService) GetPost(ctx context.Context, slug string) (*repo.Post, e
 		if err != nil {
 			return nil, err
 		}
-		
+
 		if len(resp.Posts) == 0 {
 			return nil, fmt.Errorf("post not found: %s", slug)
 		}
@@ -258,10 +258,96 @@ func (s *StrapiService) GetPostsByTag(ctx context.Context, tag string, pageSize,
 	return posts, nil
 }
 
+// GetAllAuthors returns all authors from Strapi
+func (s *StrapiService) GetAllAuthors(ctx context.Context, pageSize, page int) ([]repo.Author, error) {
+	key := fmt.Sprintf("strapi:authors:all:%d:%d", pageSize, page)
+
+	// Check if exists in cache
+	cached, err := s.cache.Get(ctx, key)
+	if err == nil {
+		var authors []repo.Author
+		if err := json.Unmarshal([]byte(cached), &authors); err == nil {
+			return authors, nil
+		}
+	}
+
+	// Cache miss - use singleflight
+	result, err, _ := s.sf.Do(key, func() (any, error) {
+		resp, err := repo.GetAllAuthors(ctx, s.client, pageSize, page)
+		if err != nil {
+			return nil, err
+		}
+
+		// Store in cache
+		go func() {
+			if data, err := json.Marshal(resp.Authors); err == nil {
+				// Store in cache with 5 minute expiry
+				s.cache.Set(context.Background(), key, data, time.Minute*5)
+			}
+		}()
+
+		return resp.Authors, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Return results
+	authors, ok := result.([]repo.Author)
+	if !ok {
+		return nil, fmt.Errorf("unexpected type from singleflight")
+	}
+	return authors, nil
+}
+
+// GetAllTags returns all tags from Strapi
+func (s *StrapiService) GetAllTags(ctx context.Context) ([]repo.Tag, error) {
+	key := fmt.Sprintf("strapi:tags:all")
+
+	// Check if exists in cache
+	cached, err := s.cache.Get(ctx, key)
+	if err == nil {
+		var tags []repo.Tag
+		if err := json.Unmarshal([]byte(cached), tags); err == nil {
+			return tags, nil
+		}
+	}
+
+	// Cache miss - use singleflight
+	result, err, _ := s.sf.Do(key, func() (any, error) {
+		resp, err := repo.GetAllTags(ctx, s.client)
+		if err != nil {
+			return nil, err
+		}
+
+		// Store in cache
+		go func() {
+			if data, err := json.Marshal(resp.Tags); err == nil {
+				// Store in cache with 5 minute expiry
+				s.cache.Set(context.Background(), key, data, time.Minute*5)
+			}
+		}()
+
+		return resp.Tags, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Return results
+	tags, ok := result.([]repo.Tag)
+	if !ok {
+		return nil, fmt.Errorf("unexpected type from singleflight")
+	}
+	return tags, nil
+}
+
 // Auth transport for headers
 type authTransport struct {
 	token string
-	base http.RoundTripper
+	base  http.RoundTripper
 }
 
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
