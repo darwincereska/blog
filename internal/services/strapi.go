@@ -309,7 +309,7 @@ func (s *StrapiService) GetAllTags(ctx context.Context) ([]repo.Tag, error) {
 	cached, err := s.cache.Get(ctx, key)
 	if err == nil {
 		var tags []repo.Tag
-		if err := json.Unmarshal([]byte(cached), tags); err == nil {
+		if err := json.Unmarshal([]byte(cached), &tags); err == nil {
 			return tags, nil
 		}
 	}
