@@ -65,8 +65,9 @@ query GetAllPosts($pageSize: Int = 10, $page: Int = 1) {
 # Get featured posts
 query GetFeaturedPosts($pageSize: Int = 10, $page: Int = 1) {
   # @genqlient(flatten: true)
-  posts(pagination: { pageSize: $pageSize, page: $page }
-  filters: { featured: { eq: true } }
+  posts(
+    pagination: { pageSize: $pageSize, page: $page }
+    filters: { featured: { eq: true } }
   ) {
     ...PostSummary 
   }

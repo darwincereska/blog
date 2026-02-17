@@ -8,6 +8,7 @@ require (
 	github.com/a-h/templ v0.3.977
 	github.com/charmbracelet/log v0.4.2
 	github.com/redis/go-redis/v9 v9.17.3
+	golang.org/x/sync v0.19.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
 )
@@ -43,7 +44,6 @@ require (
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/mod v0.26.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/tools v0.35.0 // indirect
