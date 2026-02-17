@@ -18,7 +18,7 @@ fragment Post on Post {
   }
   excerpt
   content
-    # @genqlient(flatten: true)
+  # @genqlient(flatten: true)
   featured_image {
     ...FeaturedImage
   }
