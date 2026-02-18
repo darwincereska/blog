@@ -1,18 +1,18 @@
 package config
 
 import (
-	"github.com/charmbracelet/log"
 	"blog/internal/config/env"
 	"fmt"
+	"github.com/charmbracelet/log"
 )
 
 type DatabaseConfig struct {
-	Host string
-	Port int
-	Name string
-	User string
+	Host     string
+	Port     int
+	Name     string
+	User     string
 	Password string
-	SSLMode string
+	SSLMode  string
 	TimeZone string
 }
 
@@ -29,7 +29,7 @@ func (c *DatabaseConfig) LoadConfig() {
 	c.SSLMode = env.GetString("DB_SSL_MODE", "disable")
 	c.TimeZone = env.GetString("DB_TIME_ZONE", "America/New_York")
 
-	log.Info("Successfully loaded database config")	
+	log.Info("Successfully loaded database config")
 }
 
 func (c *DatabaseConfig) GetDSN() string {

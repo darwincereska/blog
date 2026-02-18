@@ -1,36 +1,53 @@
 package routes
 
 import (
+	"blog/internal/cache"
 	"blog/internal/echo/handlers"
 	"blog/internal/echo/middleware"
 	"blog/internal/services"
-	"strconv"
+	"net/http"
 
+	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v5"
 )
 
-// Helper method to get int param or default value
-func getIntParam(c *echo.Context, name string, defaultValue int) int {
-	value, err := strconv.Atoi(c.ParamOr(name, strconv.Itoa(defaultValue)))
-	if err != nil {
-		return defaultValue
-	}
-
-	return value
+// Souces is a struct that has the sources for any data that the routes need
+type Sources struct {
+	StrapiService *services.StrapiService
+	Caches        []cache.Cache
 }
 
-func SetupRoutes(e *echo.Echo, s *services.StrapiService) {
+func SetupRoutes(e *echo.Echo, sources Sources) {
+	if sources.StrapiService == nil {
+		log.Fatal("Error", "error", "strapi service is required")
+	}
+
 	// Global middleware
 	e.Use(middleware.ServerHandler)
 
+	// Routes
+	strapiRoutes(e, sources.StrapiService)
+
+	// Special routes
+	e.GET("/api", func(c *echo.Context) error {
+		// Load all routes
+		// routes, _ := json.MarshalIndent(e.Router().Routes(), "", "")
+		return c.JSON(http.StatusOK, e.Router().Routes())
+	})
+}
+
+// Setup Strapi routes
+func strapiRoutes(e *echo.Echo, s *services.StrapiService) {
 	// Post routes
-	posts := e.Group("/posts") // Routing group
+	posts := e.Group("/api/posts") // Routing group
 
-	// GET /posts/all
+	// GET /api/posts/all
 	posts.GET("/all", func(c *echo.Context) error {
-		pageSize := getIntParam(c, "pageSize", 10)
-		page := getIntParam(c, "page", 1)
+		return handlers.GetAllPosts(c, s)
+	})
 
-		return handlers.GetAllPosts(c, s, pageSize, page)
+	// GET /api/posts/featured
+	posts.GET("/featured", func(c *echo.Context) error {
+		return handlers.GetFeaturedPosts(c, s)
 	})
 }

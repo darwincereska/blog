@@ -8,7 +8,10 @@ import (
 )
 
 // GetAllPosts returns a list of all posts
-func GetAllPosts(c *echo.Context, s *services.StrapiService, pageSize, page int) error {
+func GetAllPosts(c *echo.Context, s *services.StrapiService) error {
+	pageSize := GetIntParam(c, "pageSize", 10)
+	page := GetIntParam(c, "page", 1)
+
 	posts, err := s.GetAllPosts(c.Request().Context(), pageSize, page)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -18,7 +21,10 @@ func GetAllPosts(c *echo.Context, s *services.StrapiService, pageSize, page int)
 }
 
 // GetFeaturedPosts returns a list of featured posts
-func GetFeaturedPosts(c *echo.Context, s *services.StrapiService, pageSize, page int) error {
+func GetFeaturedPosts(c *echo.Context, s *services.StrapiService) error {
+	pageSize := GetIntParam(c, "pageSize", 10)
+	page := GetIntParam(c, "page", 1)
+
 	posts, err := s.GetFeaturedPosts(c.Request().Context(), pageSize, page)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -38,7 +44,10 @@ func GetPost(c *echo.Context, s *services.StrapiService, slug string) error {
 }
 
 // GetPostSummaries returns post summaries
-func GetPostSummaries(c *echo.Context, s *services.StrapiService, pageSize, page int) error {
+func GetPostSummaries(c *echo.Context, s *services.StrapiService) error {
+	pageSize := GetIntParam(c, "pageSize", 10)
+	page := GetIntParam(c, "page", 1)
+
 	posts, err := s.GetPostSummaries(c.Request().Context(), pageSize, page)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)

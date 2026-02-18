@@ -18,14 +18,13 @@ type DB struct {
 	*gorm.DB
 }
 
-
 // Connect connects to database and returns DB
 func Connect(dsn string) (*DB, error) {
 	// Charmbracelet's "log" as a slog handler
 	charmHandler := log.NewWithOptions(os.Stdout, log.Options{
-		ReportCaller: false,
+		ReportCaller:    false,
 		ReportTimestamp: true,
-		Prefix: "GORM",
+		Prefix:          "GORM",
 	})
 
 	slogger := slog.New(charmHandler)
@@ -34,12 +33,12 @@ func Connect(dsn string) (*DB, error) {
 	gormLogger := logger.New(
 		slog.NewLogLogger(slogger.Handler(), slog.LevelDebug),
 		logger.Config{
-			SlowThreshold: time.Millisecond * 200,
-			LogLevel: logger.Info,
+			SlowThreshold:             time.Millisecond * 200,
+			LogLevel:                  logger.Info,
 			IgnoreRecordNotFoundError: false,
-			Colorful: true,
+			Colorful:                  true,
 		},
-	)	
+	)
 
 	// Connect to database
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

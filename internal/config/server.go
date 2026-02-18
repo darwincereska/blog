@@ -1,19 +1,19 @@
 package config
 
 import (
-	"github.com/charmbracelet/log"
 	"blog/internal/config/env"
+	"github.com/charmbracelet/log"
 )
 
 type ServerConfig struct {
-	Host string
-	Port int
+	Host           string
+	Port           int
 	StrapiEndpoint string
-	RedisHost string
-	RedisPort int
-	StrapiToken string
-	CacheTTL int
-	EchoMode string
+	RedisHost      string
+	RedisPort      int
+	StrapiToken    string
+	CacheTTL       int
+	EchoMode       string
 }
 
 func NewServerConfig() *ServerConfig {

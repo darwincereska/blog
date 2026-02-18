@@ -4,13 +4,13 @@ import (
 	"blog/internal/cache"
 	"blog/internal/config"
 	"blog/internal/database"
+	"blog/internal/echo/logger"
 	"blog/internal/echo/routes"
 	"blog/internal/services"
 	"fmt"
 
 	"github.com/charmbracelet/log"
 	"github.com/labstack/echo/v5"
-	"github.com/labstack/echo/v5/middleware"
 )
 
 func main() {
@@ -38,10 +38,12 @@ func main() {
 
 	// Setup echo server
 	e := echo.New()
-	e.Use(middleware.RequestLogger())
+	e.Logger = logger.NewCharmSlog()
 
 	// Setup routes
-	routes.SetupRoutes(e, strapi_service)
+	routes.SetupRoutes(e, routes.Sources{
+		StrapiService: strapi_service,
+	})
 
 	// Start server
 	host := fmt.Sprintf("%s:%d", server_config.Host, server_config.Port)
