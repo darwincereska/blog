@@ -4,17 +4,19 @@ import (
 	"blog/internal/cache"
 	"blog/internal/config"
 	"blog/internal/database"
+	"blog/internal/echo/routes"
 	"blog/internal/services"
-	"context"
-	"os"
+	"fmt"
 
 	"github.com/charmbracelet/log"
+	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 )
 
 func main() {
 	// Server config
 	server_config := config.NewServerConfig()
-	server_config.LoadConfig()	
+	server_config.LoadConfig()
 
 	// Database Config
 	db_config := config.NewDatabaseConfig()
@@ -23,7 +25,7 @@ func main() {
 	// Connect to database
 	db, err := database.Connect(db_config.GetDSN())
 	if err != nil {
-		log.Fatal("Failed to connect to database: ", err)
+		log.Error("Failed to connect to database: ", err)
 	}
 	defer db.Close()
 
@@ -34,20 +36,16 @@ func main() {
 	// Create Strapi service
 	strapi_service := services.NewStrapiService(server_config.StrapiEndpoint+"/graphql", server_config.StrapiToken, strapi_cache)
 
-	// Strapi logger
-	strapi_logger := log.NewWithOptions(os.Stderr, log.Options{
-		ReportTimestamp: true,
-		Prefix: "STRAPI",
-	})
+	// Setup echo server
+	e := echo.New()
+	e.Use(middleware.RequestLogger())
 
-	// Test strapi get
-	posts, err := strapi_service.GetFeaturedPosts(context.Background(), 10, 1) 
-	if err != nil {
-		strapi_logger.Error(err)
-		os.Exit(0)
+	// Setup routes
+	routes.SetupRoutes(e, strapi_service)
+
+	// Start server
+	host := fmt.Sprintf("%s:%d", server_config.Host, server_config.Port)
+	if err := e.Start(host); err != nil {
+		log.Fatal("Failed to start server", "error", err)
 	}
-	
-	post := posts[0]
-
-	strapi_logger.Info(post)
 }
