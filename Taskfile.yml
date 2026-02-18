@@ -6,7 +6,7 @@ vars:
   GO_CMD:
     sh: command -v go >/dev/null 2>&1 && echo "go"
   
-  GO_FLAGS: "-ldflags=-s -w -trimpath"
+  GO_FLAGS: '-ldflags="-s -w"'
   
   TAILWIND_CMD: "tailwindcss"
 
@@ -18,6 +18,8 @@ tasks:
       - task --parallel tailwind templ
 
   run:
+    env:
+      STRAPI_TOKEN: 918aad014c203e302ee185628a0591b1bc875bd999cb9cd7b9c81fac68f275cda75ea806c7ea7b352253a680838887b65a09a9904c6a140bfb3b794d19083c2659d5ad210bca8044436d67b3f6db4d7262168f66b5748b367e8d3239167c185f3b0f0932f8e10800bfb6ad0355ec7d5ca1edbe0d06814bee0a92ab7ebcef3022
     desc: Build and run go server binary
     deps: [build, build-css]
     cmds:
@@ -34,7 +36,7 @@ tasks:
     generates:
       - dist/server
     cmds:
-      - "{{ .GO_CMD }} build {{ .PROD_FLAGS }} -o dist/server cmd/main.go"
+      - "{{ .GO_CMD }} build {{ .GO_FLAGS }} -o dist/server cmd/main.go"
 
   build-queries:
     desc: Builds GraphQL queries
