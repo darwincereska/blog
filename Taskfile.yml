@@ -3,11 +3,23 @@ version: "3"
 method: checksum
 
 vars:
+  # Go binary
   GO_CMD:
     sh: command -v go >/dev/null 2>&1 && echo "go"
   
+  # Go build flags
   GO_FLAGS: '-ldflags="-s -w"'
+
+  # Server binary name
+  SERVER_BINARY: server
+
+  # Frontend binary name
+  FRONTEND_BINARY: frontend
   
+  # File extension
+  EXT: "{{ if eq .OS "windows" }}.exe{{ end }}"
+
+  # Tailwind binary
   TAILWIND_CMD: "tailwindcss"
 
 tasks:
@@ -16,7 +28,7 @@ tasks:
     desc: Start development server with hot reload
     cmds:
       - task --parallel tailwind templ
-
+  
   run:
     env:
       STRAPI_TOKEN: 918aad014c203e302ee185628a0591b1bc875bd999cb9cd7b9c81fac68f275cda75ea806c7ea7b352253a680838887b65a09a9904c6a140bfb3b794d19083c2659d5ad210bca8044436d67b3f6db4d7262168f66b5748b367e8d3239167c185f3b0f0932f8e10800bfb6ad0355ec7d5ca1edbe0d06814bee0a92ab7ebcef3022
