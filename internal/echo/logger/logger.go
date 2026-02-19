@@ -12,8 +12,9 @@ func NewCharmSlog() *slog.Logger {
 	// 1. Initialize Charmbracelet
 	options := log.Options{
 		ReportTimestamp: true,
-		ReportCaller:    true,
+		ReportCaller:    false,
 		Level:           log.DebugLevel,
+		Prefix: "ECHO",
 	}
 	handler := log.NewWithOptions(os.Stderr, options)
 
