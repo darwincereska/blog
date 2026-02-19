@@ -35,7 +35,7 @@ tasks:
     desc: Build and run go server binary
     deps: [build, build-css]
     cmds:
-      - "./dist/server"
+      - "./dist/{{ .SERVER_BINARY }}{{ .EXT }}"
 
   # Build tasks
   build:
@@ -48,7 +48,7 @@ tasks:
     generates:
       - dist/server
     cmds:
-      - "{{ .GO_CMD }} build {{ .GO_FLAGS }} -o dist/server cmd/main.go"
+      - "{{ .GO_CMD }} build {{ .GO_FLAGS }} -o dist/{{ .SERVER_BINARY }}{{ .EXT }} cmd/main.go"
 
   build-queries:
     desc: Builds GraphQL queries
