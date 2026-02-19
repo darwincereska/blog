@@ -25,7 +25,7 @@ func main() {
 	// Connect to database
 	db, err := database.Connect(db_config.GetDSN())
 	if err != nil {
-		log.Error("Failed to connect to database: ", err)
+		log.Error("Error", "error", err)
 	}
 	defer db.Close()
 
