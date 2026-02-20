@@ -3,16 +3,19 @@ package cache
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync/atomic"
 	"time"
 
 	"github.com/charmbracelet/log"
 	"github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9/logging"
 )
 
 type Cache struct {
 	Client  *redis.Client
 	Enabled atomic.Bool
+	logger *log.Logger
 }
 
 // CreateCache creates a new Redis Cache
@@ -22,19 +25,26 @@ func CreateCache(host string, port int, db int) *Cache {
 		Addr:       address,
 		Password:   "",
 		DB:         db,
-		MaxRetries: 1,
+		MaxRetries: -1,
 	})
 
 	c := &Cache{
 		Client: rdb,
+		logger: log.NewWithOptions(os.Stderr, log.Options{
+			ReportTimestamp: true,	
+			ReportCaller: false,
+			Prefix: "REDIS",
+		}),
 	}
+
+	logging.Disable() // Disable redis internal logging
 
 	// Initial check to set the state
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 
 	if err := rdb.Ping(ctx).Err(); err != nil {
-		log.Warn("Redis is offline. Starting in disabled mode.", "error", err)
+		c.logger.Warn("Redis is offline. Starting in disabled mode.", "error", err)
 		c.Enabled.Store(false)
 	} else {
 		c.Enabled.Store(true)
@@ -56,12 +66,12 @@ func (c *Cache) startHealthCheck() {
 
 		if err != nil {
 			if c.Enabled.Load() {
-				log.Error("Redis connection lost. Disabling cache.")
+				c.logger.Error("Redis connection lost. Disabling cache.")
 				c.Enabled.Store(false)
 			}
 		} else {
 			if !c.Enabled.Load() {
-				log.Info("Redis connection restored. Enabling cache.")
+				c.logger.Info("Redis connection restored. Enabling cache.")
 				c.Enabled.Store(true)
 			}
 		}
@@ -70,11 +80,19 @@ func (c *Cache) startHealthCheck() {
 
 // Set sets a key value in the cache with an expiry
 func (c *Cache) Set(ctx context.Context, key string, value any, expiration time.Duration) error {
+	if !c.Enabled.Load() {
+		return nil
+	}
+
 	return c.Client.Set(ctx, key, value, expiration).Err()
 }
 
 // Get returns a key value from the cache if there is any
 func (c *Cache) Get(ctx context.Context, key string) (string, error) {
+	if !c.Enabled.Load() {
+		return "", nil
+	}
+
 	val, err := c.Client.Get(ctx, key).Result()
 	if err != nil {
 		// Handle key not found
@@ -90,6 +108,10 @@ func (c *Cache) Get(ctx context.Context, key string) (string, error) {
 
 // Clear clears specific keys from the cache
 func (c *Cache) Clear(ctx context.Context, keys ...string) error {
+	if !c.Enabled.Load() {
+		return nil
+	}
+
 	return c.Client.Del(ctx, keys...).Err()
 }
 
@@ -119,5 +141,9 @@ func (c *Cache) ClearPattern(ctx context.Context, pattern string) error {
 
 // Flush clears entire current db
 func (c *Cache) Flush(ctx context.Context) error {
+	if !c.Enabled.Load() {
+		return fmt.Errorf("redis is in disabled mode")
+	}
+
 	return c.Client.FlushDB(ctx).Err()
 }

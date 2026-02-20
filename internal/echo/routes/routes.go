@@ -122,7 +122,7 @@ func strapiRoutes(e *echo.Echo, s *services.StrapiService) {
 	})
 
 	// GET /api/posts/post/:slug
-	posts.GET("/post/:slug", func(c *echo.Context) error {
+	e.GET("/api/post/:slug", func(c *echo.Context) error {
 		slug := c.Param("slug")
 
 		return handlers.GetPost(c, s, slug)

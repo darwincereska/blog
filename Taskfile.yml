@@ -17,7 +17,7 @@ vars:
   FRONTEND_BINARY: frontend
   
   # File extension
-  EXT: "{{ if eq .OS "windows" }}.exe{{ end }}"
+  EXT: '{{ if eq .OS "windows" }}.exe{{ end }}'
 
   # Tailwind binary
   TAILWIND_CMD: "tailwindcss"
